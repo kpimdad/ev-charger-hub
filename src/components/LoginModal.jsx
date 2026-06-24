@@ -1,20 +1,21 @@
 import { useState } from 'react'
 
+const COMPANY_PIN = '1234' // Change this to your company PIN
+
 export default function LoginModal({ onLogin }) {
   const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [reg, setReg] = useState('')
   const [pin, setPin] = useState('')
   const [error, setError] = useState('')
 
-  // Simple PIN: last 4 of reg plate + shared company PIN
-  // In production you'd store hashed PINs in Firestore
-  const COMPANY_PIN = '1234' // Change this to your company PIN
-
   const handleSubmit = () => {
     if (!name.trim()) { setError('Enter your name'); return }
+    const emailClean = email.trim().toLowerCase()
+    if (!emailClean || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailClean)) { setError('Enter a valid email address'); return }
     if (!reg.trim()) { setError('Enter your vehicle registration'); return }
     if (pin !== COMPANY_PIN) { setError('Incorrect PIN'); return }
-    onLogin({ name: name.trim(), reg: reg.trim().toUpperCase() })
+    onLogin({ name: name.trim(), email: emailClean, reg: reg.trim().toUpperCase() })
   }
 
   return (
@@ -22,7 +23,7 @@ export default function LoginModal({ onLogin }) {
       <div style={{ fontSize: 48, marginBottom: 16 }}>⚡</div>
       <h1 style={{ fontSize: 26, fontWeight: 700, marginBottom: 6 }}>EV Charger Hub</h1>
       <p style={{ color: 'var(--text-dim)', fontSize: 14, marginBottom: 36, textAlign: 'center' }}>
-        Real-time charger availability for Elekta EV drivers
+        Real-time charger availability for EV drivers
       </p>
 
       <div style={{
@@ -42,6 +43,16 @@ export default function LoginModal({ onLogin }) {
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="e.g. Imdad KP"
+            onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+          />
+        </div>
+        <div>
+          <label style={{ fontSize: 12, color: 'var(--text-dim)', display: 'block', marginBottom: 6 }}>WORK EMAIL</label>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="e.g. imdad@company.com"
             onKeyDown={e => e.key === 'Enter' && handleSubmit()}
           />
         </div>
@@ -80,7 +91,7 @@ export default function LoginModal({ onLogin }) {
       </div>
 
       <p style={{ color: 'var(--text-dim)', fontSize: 12, marginTop: 20, textAlign: 'center' }}>
-        Sessions are saved locally. Your name & reg are visible to all EV users.
+        Your email is used as your unique identity. Name & reg are visible to all EV users.
       </p>
     </div>
   )

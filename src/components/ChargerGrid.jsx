@@ -65,8 +65,11 @@ export default function ChargerGrid({ chargers, user, myCharger, onStart, onStop
   }
 
   const handleConfirm = async (chargerId, targetPercent, note) => {
-    await onStart(chargerId, targetPercent, note)
-    setModalCharger(null)
+    try {
+      await onStart(chargerId, targetPercent, note)
+    } finally {
+      setModalCharger(null)
+    }
   }
 
   return (
@@ -81,7 +84,7 @@ export default function ChargerGrid({ chargers, user, myCharger, onStart, onStop
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         {chargers.map(charger => {
           const isFree = charger.status === 'free'
-          const isMe = charger.occupant === user.name
+          const isMe = charger.occupantEmail === user.email
           const isMine = myCharger?.id === charger.id
 
           return (

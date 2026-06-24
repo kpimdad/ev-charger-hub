@@ -64,13 +64,14 @@ export default function App() {
     await setDoc(doc(db, 'chargers', String(chargerId)), {
       status: 'occupied',
       occupant: user.name,
+      occupantEmail: user.email,
       occupantReg: user.reg,
       since: serverTimestamp(),
       targetPercent: targetPercent || null,
       note: note || null
     })
     // Remove from queue if they were in it
-    const qEntry = queue.find(q => q.name === user.name)
+    const qEntry = queue.find(q => q.email === user.email)
     if (qEntry) await deleteDoc(doc(db, 'queue', qEntry.id))
     showToast(`Charger ${chargerId} started ⚡`)
   }
@@ -78,17 +79,17 @@ export default function App() {
   const stopCharging = async (chargerId) => {
     await deleteDoc(doc(db, 'chargers', String(chargerId)))
     showToast(`Charger ${chargerId} released`)
-    // Notify next in queue
     if (queue.length > 0) {
       showToast(`🔔 ${queue[0].name} — a charger is now free!`, 'info')
     }
   }
 
   const joinQueue = async (targetPercent, deadline, note, priorityType) => {
-    const already = queue.find(q => q.name === user.name)
+    const already = queue.find(q => q.email === user.email)
     if (already) { showToast('You are already in the queue', 'error'); return }
-    await setDoc(doc(db, 'queue', user.name), {
+    await setDoc(doc(db, 'queue', user.email), {
       name: user.name,
+      email: user.email,
       reg: user.reg,
       joinedAt: serverTimestamp(),
       targetPercent: targetPercent || null,
@@ -100,13 +101,14 @@ export default function App() {
   }
 
   const leaveQueue = async () => {
-    await deleteDoc(doc(db, 'queue', user.name))
+    await deleteDoc(doc(db, 'queue', user.email))
     showToast('Removed from queue')
   }
 
   const addPriority = async (type, message, deadline) => {
-    await setDoc(doc(db, 'priorities', `${user.name}_${Date.now()}`), {
+    await setDoc(doc(db, 'priorities', `${user.email}_${Date.now()}`), {
       name: user.name,
+      email: user.email,
       reg: user.reg,
       type,
       message,
@@ -121,8 +123,8 @@ export default function App() {
   }
 
   const freeCount = chargers.filter(c => c.status === 'free').length
-  const myCharger = chargers.find(c => c.occupant === user?.name)
-  const myQueuePos = queue.findIndex(q => q.name === user?.name)
+  const myCharger = chargers.find(c => c.occupantEmail === user?.email)
+  const myQueuePos = queue.findIndex(q => q.email === user?.email)
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
