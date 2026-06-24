@@ -3,7 +3,6 @@
 
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { getMessaging, getToken, onMessage } from 'firebase/messaging'
 
 const firebaseConfig = {
   apiKey: "AIzaSyDVpZQf8R14L1o5cL-2HK1rmUM8NlIowyc",
@@ -16,9 +15,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
-export const messaging = getMessaging(app)
 
-// VAPID key from Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
-export const VAPID_KEY = 'YOUR_VAPID_KEY'
-
-export { getToken, onMessage }
+// Messaging initialised lazily when notifications are set up
+export { app }

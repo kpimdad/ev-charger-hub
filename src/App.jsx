@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { db, messaging, getToken, onMessage, VAPID_KEY } from './firebase'
+import { db } from './firebase'
 import {
   collection, doc, onSnapshot, setDoc, updateDoc,
   deleteDoc, serverTimestamp, query, orderBy, getDoc
@@ -30,37 +30,6 @@ export default function App() {
   const [priorities, setPriorities] = useState([])
   const [activeTab, setActiveTab] = useState('chargers')
   const [toast, setToast] = useState(null)
-  const [notifEnabled, setNotifEnabled] = useState(false)
-
-  // Request notification permission and save FCM token
-  const enableNotifications = async () => {
-    try {
-      const permission = await Notification.requestPermission()
-      if (permission !== 'granted') { showToast('Notifications blocked', 'error'); return }
-      const token = await getToken(messaging, { vapidKey: VAPID_KEY })
-      if (token) {
-        await setDoc(doc(db, 'fcmTokens', token), {
-          token,
-          email: user?.email || 'unknown',
-          updatedAt: serverTimestamp()
-        })
-        setNotifEnabled(true)
-        showToast('Notifications enabled')
-      }
-    } catch (e) {
-      console.error('Notification setup failed', e)
-      showToast('Could not enable notifications', 'error')
-    }
-  }
-
-  // Handle foreground messages
-  useEffect(() => {
-    const unsub = onMessage(messaging, payload => {
-      showToast(`${payload.notification?.title}: ${payload.notification?.body}`, 'info')
-    })
-    return unsub
-  }, [])
-
   // Real-time listeners
   useEffect(() => {
     const unsub1 = onSnapshot(collection(db, 'chargers'), snap => {
@@ -187,16 +156,7 @@ export default function App() {
           {user && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 13, color: 'var(--text-dim)' }}>{user.name}</span>
-              <button
-                onClick={enableNotifications}
-                title={notifEnabled ? 'Notifications on' : 'Enable notifications'}
-                style={{
-                  background: notifEnabled ? 'rgba(0,230,118,0.15)' : 'var(--surface2)',
-                  color: notifEnabled ? 'var(--green)' : 'var(--text-dim)',
-                  padding: '5px 8px', fontSize: 14, border: 'none', borderRadius: 6
-                }}
-              >🔔</button>
-              <button onClick={handleLogout} style={{ background: 'var(--surface2)', color: 'var(--text-dim)', padding: '5px 10px', fontSize: 12 }}>Sign out</button>
+<button onClick={handleLogout} style={{ background: 'var(--surface2)', color: 'var(--text-dim)', padding: '5px 10px', fontSize: 12 }}>Sign out</button>
             </div>
           )}
         </div>
