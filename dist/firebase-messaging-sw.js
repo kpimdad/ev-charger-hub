@@ -3,12 +3,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-com
 
 // REPLACE with your actual Firebase config
 firebase.initializeApp({
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDVpZQf8R14L1o5cL-2HK1rmUM8NlIowyc",
+  authDomain: "ev-charger-hub.firebaseapp.com",
+  projectId: "ev-charger-hub",
+  storageBucket: "ev-charger-hub.firebasestorage.app",
+  messagingSenderId: "317325123119",
+  appId: "1:317325123119:web:6095f1fc0eb25e1e9a30da"
 });
 
 const messaging = firebase.messaging();
