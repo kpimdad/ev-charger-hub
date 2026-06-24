@@ -14,7 +14,14 @@ const TOTAL_CHARGERS = 8
 export default function App() {
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('ev_user')
-    return saved ? JSON.parse(saved) : null
+    if (!saved) return null
+    const parsed = JSON.parse(saved)
+    // Force re-login if old session missing email field
+    if (!parsed.email) {
+      localStorage.removeItem('ev_user')
+      return null
+    }
+    return parsed
   })
   const [chargers, setChargers] = useState(
     Array.from({ length: TOTAL_CHARGERS }, (_, i) => ({ id: i + 1, status: 'free', occupant: null, since: null, targetPercent: null, note: null }))

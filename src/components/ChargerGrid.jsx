@@ -12,6 +12,12 @@ function timeSince(ts) {
 function StartModal({ chargerId, onConfirm, onClose }) {
   const [targetPercent, setTargetPercent] = useState('')
   const [note, setNote] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleStart = async () => {
+    setLoading(true)
+    await onConfirm(chargerId, targetPercent, note)
+  }
 
   return (
     <div style={{
@@ -32,6 +38,7 @@ function StartModal({ chargerId, onConfirm, onClose }) {
               value={targetPercent}
               onChange={e => setTargetPercent(e.target.value)}
               placeholder="e.g. 80"
+              disabled={loading}
             />
           </div>
           <div>
@@ -40,15 +47,17 @@ function StartModal({ chargerId, onConfirm, onClose }) {
               value={note}
               onChange={e => setNote(e.target.value)}
               placeholder="e.g. Need 50% by 2pm"
+              disabled={loading}
             />
           </div>
           <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-            <button onClick={onClose} style={{ flex: 1, background: 'var(--surface2)', color: 'var(--text-dim)', padding: 12 }}>Cancel</button>
+            <button onClick={onClose} disabled={loading} style={{ flex: 1, background: 'var(--surface2)', color: 'var(--text-dim)', padding: 12 }}>Cancel</button>
             <button
-              onClick={() => onConfirm(chargerId, targetPercent, note)}
-              style={{ flex: 2, background: 'var(--green)', color: '#0a1a0a', padding: 12, fontWeight: 700 }}
+              onClick={handleStart}
+              disabled={loading}
+              style={{ flex: 2, background: 'var(--green)', color: '#0a1a0a', padding: 12, fontWeight: 700, opacity: loading ? 0.6 : 1 }}
             >
-              Start charging
+              {loading ? 'Starting…' : 'Start charging'}
             </button>
           </div>
         </div>
