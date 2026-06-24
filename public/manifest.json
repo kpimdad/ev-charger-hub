@@ -1,0 +1,24 @@
+{
+  "name": "EV Charger Hub",
+  "short_name": "EV Hub",
+  "description": "Real-time EV charger availability",
+  "start_url": "/ev-charger-hub/",
+  "scope": "/ev-charger-hub/",
+  "display": "standalone",
+  "background_color": "#0a0f0a",
+  "theme_color": "#0a0f0a",
+  "icons": [
+    {
+      "src": "/ev-charger-hub/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/ev-charger-hub/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
